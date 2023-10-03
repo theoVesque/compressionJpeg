@@ -8,6 +8,6 @@ def compression(request):
 
 
 def decompression(request):
-    return HttpResponse('<h1>Hello world 2!</h1>')
+    return render(request, 'listings/decompression.html')
 
 

@@ -12,18 +12,17 @@
             <h2>Compression JPEG</h2>
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-              <a class="nav-item nav-link active" href="#">Compresser une image</a>
-              <a class="nav-item nav-link" href="#">Décompresser une image</a>
+              <a class="nav-item nav-link active" href="{% url 'compression' %}">Compresser une image</a>
+              <a class="nav-item nav-link" href="{% url 'decompression' %}">Décompresser une image</a>
             </div>
           </div>
-
         </nav>
 
         <div class="div-upload-img">
             <label for="images" class="drop-container" id="dropcontainer">
               <span class="drop-title">Déposer votre image</span>
               ou
-              <input type="file" id="images" accept="image/*" required>
+              <input type="file" id="images" accept="image/png,image/jpeg,image/jpg" required>
             </label>
         </div>
 

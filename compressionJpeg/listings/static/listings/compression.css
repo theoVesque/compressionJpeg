@@ -5,6 +5,8 @@ body {
     background-color: #ffffff;
 }
 
+
+/* Menu de navigation */
 nav h2 {
     margin: 20px;
     margin-right: 50px;
@@ -26,6 +28,7 @@ nav h2 {
     text-underline-offset: 3px;
 }
 
+/* CSS pour le select de fichier */
 input[type="file"]::file-selector-button {
     border-radius: 4px;
     padding: 0 16px;
@@ -103,5 +106,5 @@ input[type="file"]::file-selector-button:active {
     text-align: center;
     width: 100vw;
     height: 30vh;
-    padding: 0px 70px 0px 70px;
+    padding: 0px 40% 0px 40%;
 }

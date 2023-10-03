@@ -29,7 +29,7 @@ nav h2 {
 }
 
 /* CSS pour le select de fichier */
-input[type="file"]::file-selector-button {
+input[type="file"]::file-selector-button, .compresser-submit {
     border-radius: 4px;
     padding: 0 16px;
     height: 40px;
@@ -43,14 +43,14 @@ input[type="file"]::file-selector-button {
 }
 
 /* file upload button hover state */
-input[type="file"]::file-selector-button:hover {
+input[type="file"]::file-selector-button:hover, .compresser-submit:hover {
     background-color: #364073;
     border: 1px solid #364073;
 
 }
 
 /* file upload button active state */
-input[type="file"]::file-selector-button:active {
+input[type="file"]::file-selector-button:active, .compresser-submit:active {
     background-color: #e5e7eb;
 }
 
@@ -106,5 +106,11 @@ input[type="file"]::file-selector-button:active {
     text-align: center;
     width: 100vw;
     height: 30vh;
-    padding: 0px 40% 0px 40%;
+    padding: 0px 0px 0px 0px;
+}
+
+.compresser-submit {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }

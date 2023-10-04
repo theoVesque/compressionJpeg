@@ -5,7 +5,9 @@
 </head>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'listings/compression.css' %}">
+<link rel="stylesheet" href="{% static 'listings/uploadFile.css' %}">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
@@ -21,20 +23,24 @@
     </div>
 </nav>
 
-<form action="">
-    <div class="div-upload-img">
-        <label for="images" class="drop-container" id="dropcontainer">
-            <span class="drop-title">Déposer votre image</span>
-            ou
-            <input type="file" id="images" accept="image/png,image/jpeg,image/jpg" required>
-        </label>
+<form method="post" class="form-container" enctype='multipart/form-data'>
+    {% csrf_token %}
+    <div class="upload-files-container">
+        <div class="zone-fichier-glissable">
+            <span class="material-icons-outlined icone-upload"> file_upload </span>
+            <h3 class="message-dynamique">Glissez votre fichier ici</h3>
+            <label class="label"> <span class="parcourir-fichiers"> <input type="file"
+                                                                              class="input-fichier-par-defaut"
+                                                                              name="file"/> </span> </label>
+        </div>
+        <input type="submit" class="bouton-uploader" name="compresser" value="Compresser"></input>
     </div>
-    <input type="submit" value="Compresser cette image" name="compresser" class="compresser-submit">
 </form>
 
 <div id="img-preview"></div>
 
 
 <script src="{% static 'listings/compression.js' %}"></script>
+<script src="{% static 'listings/uploadFile.js' %}"></script>
 </body>
 </html>

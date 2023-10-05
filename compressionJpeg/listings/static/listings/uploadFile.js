@@ -44,49 +44,55 @@ inputFichier.addEventListener("change", (e) => {
 });
 
 
+let titreImageAffiche = false; // Variable pour vérifier si le titre est déjà affiché
+
 //Code pour afficher l'image de base une fois le bouton compresser sélectionné
 document.querySelector("form").addEventListener("submit", (e) => {
-    e.preventDefault(); // Empêchez le formulaire de se soumettre normalement
+    e.preventDefault(); // Empêche le formulaire de se soumettre normalement
 
-    // Récupérez l'élément img de l'aperçu de l'image
+    // Récupére l'élément img de l'aperçu de l'image
     const imagePreview = document.querySelector("#image-preview");
 
-    // Récupérez le champ de fichier
+    // Récupére le champ de fichier
     const inputFichier = document.querySelector(".input-fichier-par-defaut");
 
-    // Récupérez l'élément où vous voulez afficher le titre
-    const titreImageContainer = document.querySelector("#titre-image-container");
-
-    // Vérifiez si un fichier a été sélectionné
+    // Vérifie si un fichier a été sélectionné
     if (inputFichier.files.length > 0) {
-        // Obtenez le premier fichier sélectionné
+        // Obtiens le premier fichier sélectionné
         const fichier = inputFichier.files[0];
 
-        // Vérifiez si le fichier est sélectionné
+        // Vérifie si le fichier est sélectionné
         if (fichier) {
-            // Créez un texte pour le titre de l'image
-            const titreImage = document.createElement('h2');
-            titreImage.innerText = "L'image que vous avez sélectionnée :";
-            titreImage.style.textAlign = "center";
+            // Vérifie si le titre n'est pas encore affiché
+            if (!titreImageAffiche) {
+                // Crée un texte pour le titre de l'image
+                const titreImage = document.createElement('h2');
+                titreImage.innerText = "L'image que vous avez sélectionnée :";
+                titreImage.style.textAlign = "center";
 
-            // Créez une div pour le titre et l'image
-            const titreImageContainer = document.createElement('div');
-            titreImageContainer.appendChild(titreImage);
-            titreImageContainer.appendChild(imagePreview);
-            titreImageContainer.style.marginTop = "-100px";
-            imagePreview.style.padding = '2%';
+                // Crée une div pour le titre et l'image
+                const titreImageContainer = document.createElement('div');
+                titreImageContainer.id = "titre-image-container"; // Ajoutez un identifiant pour le repérer
+                titreImageContainer.appendChild(titreImage);
+                titreImageContainer.appendChild(imagePreview);
+                titreImageContainer.style.marginTop = "-100px";
+                imagePreview.style.padding = '2%';
 
-            // Ajoutez la div au document
-            document.body.appendChild(titreImageContainer);
+                // Ajoute la div au document
+                document.body.appendChild(titreImageContainer);
 
-            // Créez un objet URL pour l'image
+                // Mise à jour la variable pour indiquer que le titre est affiché
+                titreImageAffiche = true;
+            }
+
+            // Crée un objet URL pour l'image
             const imageURL = URL.createObjectURL(fichier);
 
-            // Affichez l'image dans l'aperçu
+            // Affiche l'image dans l'aperçu
             imagePreview.src = imageURL;
             imagePreview.style.display = "block";
 
-            // Réinitialisez l'aperçu du fichier si nécessaire
+            // Réinitialise l'aperçu du fichier si nécessaire
             iconeUpload.innerHTML = 'file_upload';
             texteGlisserDeposer.innerHTML = 'Glissez votre fichier ici';
             boutonCompresser.innerHTML = 'Compresser';

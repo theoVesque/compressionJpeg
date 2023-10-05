@@ -25,7 +25,28 @@
 
 <form method="post" class="form-container" enctype='multipart/form-data'>
     {% csrf_token %}
+
     <div class="upload-files-container">
+
+        <!--Select range pour choisir la qualité de compression -->
+        <div id="select-qualite">
+            <div class="select-radio">
+                <input type="radio" name="taux_compression" id="1" value="compression_basse" required>
+                <label for="1">Compression basse</label>
+            </div>
+
+            <div class="select-radio">
+                <input type="radio" name="taux_compression" id="2" value="compression_moyenne" required>
+                <label for="1">Compression moyenne</label>
+            </div>
+
+            <div class="select-radio">
+                <input type="radio" name="taux_compression" id="3" value="compression_elevee" required>
+                <label for="1">Compression élevée</label>
+            </div>
+        </div>
+
+
         <div class="zone-fichier-glissable">
             <span class="material-icons-outlined icone-upload"> file_upload </span>
             <h3 class="message-dynamique">Glissez votre fichier ici</h3>

@@ -28,3 +28,39 @@ nav h2 {
     text-underline-offset: 3px;
 }
 
+
+/* CSS pour le select range de la qualité de compression */
+#select-qualite {
+    display: flex;
+    margin-bottom: 5%;
+}
+
+.select-radio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1%;
+    text-align: center;
+}
+
+input[type=radio] {
+    appearance: none;
+
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #999;
+    transition: 0.2s all linear;
+    margin-right: 5px;
+    position: relative;
+}
+
+input[type=radio]:checked {
+    border: 6px solid #18282f;
+    width: 20px;
+    height: 20px;
+}
+
+input[type=radio]:checked + label {
+    font-weight: bold;
+}

@@ -25,7 +25,7 @@ body {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 10px 20px, rgba(0, 0, 0, 0.28) 0px 6px 6px;
 }
 .zone-fichier-glissable {
-    border: 2px dashed #122728;
+    border: 2px dashed #18282f;
     border-radius: 40px;
     margin: 10px 0 15px;
     padding: 30px 50px;
@@ -43,7 +43,7 @@ body {
     font-size: 19px;
 }
 .zone-fichier-glissable label .texte-pour-parcourir-fichier {
-    color: #122728;
+    color: #18282f;
     font-weight: bolder;
     cursor: pointer;
 }
@@ -62,7 +62,7 @@ body {
 
 .bouton-uploader {
     font-family: 'Montserrat';
-    background-color: #122728;
+    background-color: #18282f;
     color: #f7fff7;
     display: flex;
     align-items: center;
@@ -80,15 +80,28 @@ label {
 
 
 .zone-fichier-glissable {
-    position: relative; /* Ajoutez cette ligne */
+    position: relative;
 }
 
 .input-fichier-par-defaut {
     opacity: 0;
-    position: absolute; /* Ajoutez cette ligne */
-    width: 100%; /* Ajoutez cette ligne */
-    height: 100%; /* Ajoutez cette ligne */
-    top: 0; /* Ajoutez cette ligne */
-    left: 0; /* Ajoutez cette ligne */
-    cursor: pointer; /* Ajoutez cette ligne */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+
+
+#image-preview {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#image-preview:hover {
+    position: relative;
+    transform: scale(1.3);
+    transition: 0.7s;
 }

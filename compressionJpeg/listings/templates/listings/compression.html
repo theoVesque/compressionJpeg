@@ -30,14 +30,16 @@
             <span class="material-icons-outlined icone-upload"> file_upload </span>
             <h3 class="message-dynamique">Glissez votre fichier ici</h3>
             <label class="label"> <span class="parcourir-fichiers"> <input type="file"
-                                                                              class="input-fichier-par-defaut"
-                                                                              name="file"/> </span> </label>
+                                                                           class="input-fichier-par-defaut"
+                                                                           name="file"/> </span> </label>
         </div>
         <input type="submit" class="bouton-uploader" name="compresser" value="Compresser"></input>
     </div>
 </form>
 
-<div id="img-preview"></div>
+<div id="img-preview">
+    <img id="image-preview" src="" alt="Aperçu de l'image" style="max-width: 100%; max-height: 300px; display: none;">
+</div>
 
 
 <script src="{% static 'listings/compression.js' %}"></script>

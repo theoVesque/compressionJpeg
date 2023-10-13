@@ -20,6 +20,6 @@ from listings  import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('compression/', views.compression, name="compression"),
+    path('', views.compression, name="compression"),
     path('decompression/', views.decompression, name="decompression"),
 ]

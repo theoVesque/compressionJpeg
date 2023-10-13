@@ -74,6 +74,10 @@ body {
     cursor: pointer;
 }
 
+.bouton-uploader:hover {
+    background-color: #324856;
+}
+
 label {
     display: block;
 }

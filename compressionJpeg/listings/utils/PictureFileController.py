@@ -25,20 +25,24 @@ class PictureFileController:
         if(fileName.lower().split(".")[-1] == "png"):
             return True
         return False
-    
-    def createBitmapBinaryFile(self):
+   
+    def pictureToBinaryFile(self) -> str:
+        """
+            Turn a picture into a text file that represents its binary representation.
+        """
         with open(self.pictureFile,"rb") as readedFile:
             content = readedFile.readlines()
             writedFile = self.pictureFile.split(".")[0]+"_binaries.tx"
             with open(writedFile,"w") as wf:
                 for line in content:
                     wf.write(line.hex())
+            return writedFile
 
             
 
 if __name__ == '__main__':
     pictureC = PictureFileController("compressionJpeg/listings/static/pictures/bitmap_picture.jpg")
-    pictureC.createBitmapBinaryFile()
+    pictureC.pictureToBinaryFileBinaryFile()
         
 
 

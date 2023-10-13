@@ -10,18 +10,27 @@ class PictureFileController:
 
     @staticmethod
     def isJpegFile(fileName:str)->bool:
+        """
+            Test either the picture "fileName" is a jpeg picture or not.
+        """
         if(fileName.lower().split(".")[-1] in ["jpeg","jpe","jpg","jfif"]):
             return True
         return False
     
     @staticmethod
     def isBitmapFile(fileName:str)->bool:
+        """
+            Test either the picture "fileName" is a bmp picture or not.
+        """
         if(fileName.lower().split(".")[-1] == "bmp"):
             return True
         return False
     
     @staticmethod
     def isPngFile(fileName:str)->bool:
+        """
+            Test either the picture "fileName" is a png picture or not.
+        """
         if(fileName.lower().split(".")[-1] == "png"):
             return True
         return False
@@ -29,6 +38,7 @@ class PictureFileController:
     def pictureToBinaryFile(self) -> str:
         """
             Turn a picture into a text file that represents its binary representation.
+            @Return str == filename of the created file.
         """
         with open(self.pictureFile,"rb") as readedFile:
             content = readedFile.readlines()
@@ -43,6 +53,7 @@ class PictureFileController:
 if __name__ == '__main__':
     pictureC = PictureFileController("compressionJpeg/listings/static/pictures/bitmap_picture.jpg")
     pictureC.pictureToBinaryFileBinaryFile()
+    
         
 
 

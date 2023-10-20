@@ -33,7 +33,6 @@ with open('matrice_pixels.txt', 'w') as fichier:
         ligne_texte = ' '.join(map(str, ligne))
         fichier.write(ligne_texte + '\n')
 
-
 # DECOUPAGE EN BLOCS DE 8X8 PIXELS
 
 def decoupage8x8():
@@ -63,8 +62,6 @@ def decoupage8x8():
             fichier.write(np.array_str(bloc) + '\n\n')
 
 
-decoupage8x8()
-
 matrice_quantification = [
     [16, 11, 10, 16, 24, 40, 51, 61],
     [12, 12, 14, 19, 26, 58, 60, 55],
@@ -75,8 +72,6 @@ matrice_quantification = [
     [49, 64, 78, 87, 103, 121, 120, 101],
     [72, 92, 95, 98, 112, 100, 103, 99]
 ]
-
-
 
 #matrice qui sert juste à tester le code pour la quantification
 matrice_apres_dct = [
@@ -93,11 +88,9 @@ matrice_apres_dct = [
 def quantification(matrice):
     nouvelle_matrice_apres_quantification = []
     for i in range(len(matrice)):
-        for j in range(8):
-            bloc = []
-            for n in range (8):
-                #print(matrice[i][n]+"\n"+matrice_quantification[i][n])
-                bloc.append(floor(matrice[j][n]/matrice_quantification[j][n]))
+        bloc = []
+        for n in range (8):
+            bloc.append(floor(matrice[i][n]/matrice_quantification[i][n]))
             nouvelle_matrice_apres_quantification.append(bloc)
 
     print(nouvelle_matrice_apres_quantification)
@@ -105,14 +98,6 @@ def quantification(matrice):
 
 #quantification(matrice_apres_dct)
 
-
-def zigzag(matrice):
-    lignes = 8
-    colonnes = 8
-
-    for i in range(lignes):
-        for j in range(colonnes):
-
-
-
-print(quantification(matrice_apres_dct))
+if (__name__=='__main__'):
+    decoupage8x8()
+    print(quantification(matrice_apres_dct))

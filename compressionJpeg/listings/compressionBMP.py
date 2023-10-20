@@ -90,7 +90,11 @@ def quantification(matrice):
     for i in range(len(matrice)):
         bloc = []
         for n in range (8):
-            bloc.append(floor(matrice[i][n]/matrice_quantification[i][n]))
+            res = matrice[i][n]/matrice_quantification[i][n]
+            if (res < 0):
+                bloc.append(int(res)+1)
+            else:
+                bloc.append(floor(res))
             nouvelle_matrice_apres_quantification.append(bloc)
 
     print(nouvelle_matrice_apres_quantification)
@@ -99,5 +103,5 @@ def quantification(matrice):
 #quantification(matrice_apres_dct)
 
 if (__name__=='__main__'):
-    decoupage8x8()
+    #decoupage8x8()
     print(quantification(matrice_apres_dct))

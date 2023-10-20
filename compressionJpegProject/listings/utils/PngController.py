@@ -16,4 +16,3 @@ class PngController(PictureFileController):
             return True
         return False
 
-    

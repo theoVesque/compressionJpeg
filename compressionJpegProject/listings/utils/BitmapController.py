@@ -1,9 +1,11 @@
 import PictureFileController
+from PIL import Image
 
 class BitmapController(PictureFileController):
     def __init__(self,fileName:str):
         if(BitmapController.isBitmapFile(fileName)):
-            super().__init__(self,fileName)
+            super().__init__(fileName)
+            self.image = Image.open(self.picturePath)
         else:
             raise TypeError("Bad picture format: only bmp picture is accepted.")
 

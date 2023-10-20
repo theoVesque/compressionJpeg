@@ -1,5 +1,6 @@
-from PictureFileController import *
+from PictureFileController import PictureFileController
 from PIL import Image
+import os.path
 
 class JpegController(PictureFileController):
     def __init__(self,fileName:str):
@@ -19,13 +20,39 @@ class JpegController(PictureFileController):
         return False
     
     
-    def getPayloadData(self):
+    def getPixelsMatrix(self):
         if(self.image):
-            return self.image.getdata()
+            return list(self.image.getdata())
+        else:
+            return ValueError("\"image\" attribut is not defined.")
+    
+    def getCompressedDataFromJpegPicture(self):
+        if(self.image):
+            return self.image.tobytes()
+        else:
+            return ValueError("\"image\" attribut is not defined.")
+        
+    def writeDataToFile(self,nameFile:str)->bool:
+        filePath = self.getAbsPicturePath(nameFile)
+        print(filePath)
+        with open(filePath,'w') as writedFile:
+            data = self.getCompressedDataFromJpegPicture()
+            writedFile.write(data.hex())
+        if os.path.isfile(filePath):
+            return True
+        else :
+            return False
+
+    def convertPictureData(self,pixelMode:str):
+        if(self.image):
+            self.image.convert(pixelMode)
         else:
             return ValueError("\"image\" attribut is not defined.")
 
-
 if __name__ == '__main__':
-    jpegC = JpegController("jpeg_picture.jpg")
-    print(jpegC.getPayloadData())
+    owlJpeg = JpegController("jpeg_picture_100px.jpg")
+    owlJpeg.convertPictureData("L")
+    print(owlJpeg.getCompressedDataFromJpegPicture())
+    owlJpeg.writeDataToFile("jpeg_picture_100px_binaries.txt")
+    owlJpeg.pictureToBinaryFile()
+    

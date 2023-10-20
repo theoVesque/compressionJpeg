@@ -1,5 +1,4 @@
-from PictureFileController import PictureFileController
-from PIL import Image
+from PictureFileController import *
 import os.path
 
 class JpegController(PictureFileController):
@@ -10,7 +9,6 @@ class JpegController(PictureFileController):
         else:
             raise TypeError("Bad picture format: only jpeg picture is accepted.")
 
-    @staticmethod
     def isJpegFile(fileName:str)->bool:
         """
             Test whether the picture "fileName" is a jpeg picture or not.

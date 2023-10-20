@@ -28,7 +28,7 @@ class JpegDecoder():
             return ValueError("\"image\" attribut is not defined.")
         
     def writeDataToFile(self,nameFile:str)->bool:
-        filePath = self.getAbsPicturePath(nameFile)
+        filePath = getAbsPicturePath(nameFile)
         print(filePath)
         with open(filePath,'w') as writedFile:
             data = self.getCompressedDataFromJpegPicture()

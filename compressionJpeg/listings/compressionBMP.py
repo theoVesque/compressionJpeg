@@ -76,9 +76,7 @@ matrice_quantification = [
     [72, 92, 95, 98, 112, 100, 103, 99]
 ]
 
-
-
-#matrice qui sert juste à tester le code pour la quantification
+# matrice qui sert juste à tester le code pour la quantification
 matrice_apres_dct = [
     [-415.38, -30.19, -61.20, 27.24, 56.12, -20.10, -2.39, 0.46],
     [4.47, -21.86, -60.76, 10.25, 13.15, -7.09, -8.54, 4.88],
@@ -90,29 +88,63 @@ matrice_apres_dct = [
     [-0.17, 0.14, -1.07, -1.07, -1.17, -0.10, 0.50, 1.68]
 ]
 
+
 def quantification(matrice):
     nouvelle_matrice_apres_quantification = []
     for i in range(len(matrice)):
-        for j in range(8):
-            bloc = []
-            for n in range (8):
-                #print(matrice[i][n]+"\n"+matrice_quantification[i][n])
-                bloc.append(floor(matrice[j][n]/matrice_quantification[j][n]))
-            nouvelle_matrice_apres_quantification.append(bloc)
+        bloc = []
+        for n in range(8):
+            # print(matrice[i][n]+"\n"+matrice_quantification[i][n])
+            res = floor(matrice[i][n] / matrice_quantification[i][n])
+            if(res<0):
+                bloc.append(int(res)+1)
+            else:
+                bloc.append(floor(res))
+        nouvelle_matrice_apres_quantification.append(bloc)
 
-    print(nouvelle_matrice_apres_quantification)
+    # print(nouvelle_matrice_apres_quantification)
     return nouvelle_matrice_apres_quantification
 
-#quantification(matrice_apres_dct)
+
+print(quantification(matrice_apres_dct))
 
 
 def zigzag(matrice):
     lignes = 8
     colonnes = 8
+    matrice_retour = []
 
-    for i in range(lignes):
-        for j in range(colonnes):
+    i = 0
+    j = 0
 
+    while (i <= lignes - 1 and j <= colonnes - 1):
+        matrice_retour.append(matrice[i][j])
+        if (i == 0 or i == lignes - 1):
+            if (j == colonnes - 1):
+                j -= 1
+                i += 1
+            j += 1
+            matrice_retour.append(matrice[i][j])
+        else:
+            if j == 0 or j == colonnes - 1:
+                if i == lignes - 1:
+                    i = i - 1
+                    j = j + 1
+                i = i + 1
+                matrice_retour.append(matrice[i][j])
 
+        if i == 0 or j == colonnes - 1:
+            position = False
+        if j == 0 or i == lignes - 1:
+            position = True
 
-print(quantification(matrice_apres_dct))
+        if position:
+            i = i - 1
+            j = j + 1
+        else:
+            i = i + 1
+            j = j - 1
+
+    return matrice_retour
+
+# print(zigzag(quantification(matrice_apres_dct)))

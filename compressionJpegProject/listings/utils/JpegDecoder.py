@@ -15,12 +15,6 @@ class JpegDecoder():
             return True
         return False
     
-    def getPixelsMatrix(self):
-        if(self.image):
-            return list(self.image.getdata())
-        else:
-            return ValueError("\"image\" attribut is not defined.")
-    
     def getCompressedDataFromJpegPicture(self):
         if(self.image):
             return self.image.tobytes()
@@ -38,15 +32,9 @@ class JpegDecoder():
         else :
             return False
 
-    def convertPictureData(self,pixelMode:str):
-        if(self.image):
-            self.image.convert(pixelMode)
-        else:
-            return ValueError("\"image\" attribut is not defined.")
-
 if __name__ == '__main__':
     owlJpeg = JpegDecoder("jpeg_picture_100px.jpg")
-    owlJpeg.convertPictureData("L")
+    owlJpeg.image = owlJpeg.image.convert('L')
     print(owlJpeg.getCompressedDataFromJpegPicture())
     owlJpeg.writeDataToFile("jpeg_picture_100px_binaries.txt")
     pictureToBinaryFile(owlJpeg.picturePath)

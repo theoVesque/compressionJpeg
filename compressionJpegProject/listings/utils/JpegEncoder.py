@@ -38,36 +38,91 @@ class JpegEncoder():
                 [49, 64, 78, 87, 103, 121, 120, 101],
                 [72, 92, 95, 98, 112, 100, 103, 99]
                 ]
-         
-
-    def pictureToBinaryFile(self) -> str:
-        """
-            Turn a picture into a text file that represents its binary representation.
-            @Return str == filename of the created file.
-        """
-        with open(self.picturePath,"rb") as readedFile:
-            content = readedFile.readlines()
-            writedFile = self.picturePath.split(".")[0]+"_RawBinaries.tx"
-            with open(writedFile,"w") as wf:
-                for line in content:
-                    wf.write(line.hex())
-            return writedFile
-
 
     @staticmethod
     def quantification(matrice,quantificationTable):
         return [[round(matrice[i][j]/quantificationTable[i][j]) for j in range(8)]for i in range(8)]
+    
+    def getPixelsMatrix(self):
+        if(self.image):
+            listOfPixels = list(self.image.getdata())
+            width,height = self.image.size
+            l=0
+            c=0
+            k=0
+            matrixOfPixels = []
+            while l < height :
+                ligne = []
+                while c < width:
+                    ligne.append(listOfPixels[c+k])
+                    c+=1
+                matrixOfPixels.append(ligne)
+                c=0
+                k+=width
+                l+=1
+            return matrixOfPixels
+        else:
+            return ValueError("\"image\" attribut is not defined.")
 
-           
+    def adjustSizeOfMatrixOfPixels_repeatEnd(self):
+        width,height = self.image.size
+        matrixOfPixels = self.getPixelsMatrix()
+        nbOfPixelsToAddPerLign = 8 - width%8
+        nbOfPixelsToAddPerCol = 8 - height%8
+        for l in range (len(matrixOfPixels)):
+            matrixOfPixels[l] = matrixOfPixels[l] + matrixOfPixels[l][-nbOfPixelsToAddPerLign::]
+        matrixOfPixels = matrixOfPixels + matrixOfPixels[-nbOfPixelsToAddPerCol::]
+        return matrixOfPixels
+    
+    def adjustSizeOfMatrixOfPixels_addWhitePixels(self):
+        width,height = self.image.size
+        matrixOfPixels = self.getPixelsMatrix()
+        nbOfPixelsToAddPerLign = 8 - width%8
+        nbOfPixelsToAddPerCol = 8 - height%8
+        for l in range (len(matrixOfPixels)):
+            matrixOfPixels[l] = matrixOfPixels[l] + [255]*nbOfPixelsToAddPerLign
+        matrixOfPixels = matrixOfPixels + [[255]*len(matrixOfPixels[0])]*nbOfPixelsToAddPerCol
+        return matrixOfPixels
+    
+    def createPictureFromMatrixOfPixels(self,type):
+        if(type.upper()=="RP"):
+            adjustedPictureMatrixOfPixels = self.adjustSizeOfMatrixOfPixels_repeatEnd()
+        elif(type.upper()=="WP"):
+            adjustedPictureMatrixOfPixels = self.adjustSizeOfMatrixOfPixels_addWhitePixels()
+        else:
+            raise Exception("Type attribut is unknown")
+
+        adjustedPictureListOfPixels = []
+        
+        #Transform matrix of pixels to list of pixels
+        for l in range(len(adjustedPictureMatrixOfPixels)):
+            for c in range(len(adjustedPictureMatrixOfPixels[0])):
+                adjustedPictureListOfPixels.append(adjustedPictureMatrixOfPixels[l][c])
+        
+        #Creating the new picture with adjusted size
+        width = len(adjustedPictureMatrixOfPixels[0])
+        height = len(adjustedPictureMatrixOfPixels)
+        adjustedPicture = Image.new("L",(width,height))
+        adjustedPicture.putdata(adjustedPictureListOfPixels)
+        adjustedPicture.save(self.picturePath+"_adjusted.bmp")
+
+
+
+    def decoupage8x8(self):
+        pixelsMatrix = self.getPixelsMatrix()
+        
+
 if __name__ == '__main__':
-    owlBitmap = JpegEncoder("jpeg_picture_100px.jpg")
-    bitmapPicture = JpegEncoder("bitmap_picture.bmp")
+    owlBitmap = JpegEncoder("bitmap_picture_250.bmp")
     print(owlBitmap.pictureFormat)
-    print(bitmapPicture.pictureFormat)
+    owlBitmap.image = owlBitmap.image.convert('L')
+    #print(owlBitmap.getPixelsMatrix())
+    #matrix = owlBitmap.adjustSizeOfMatrixOfPixels_addWhitePixels()
+    owlBitmap.createPictureFromMatrixOfPixels("wp")
     
     #Test quantification
     #matrice qui sert juste à tester le code pour la quantification
-    matrice_apres_dct = [
+    """ matrice_apres_dct = [
         [-415.38, -30.19, -61.20, 27.24, 56.12, -20.10, -2.39, 0.46],
         [4.47, -21.86, -60.76, 10.25, 13.15, -7.09, -8.54, 4.88],
         [-46.83, 7.37, 77.13, -24.56, -28.91, 9.93, 5.42, -5.65],
@@ -78,6 +133,6 @@ if __name__ == '__main__':
         [-0.17, 0.14, -1.07, -1.07, -1.17, -0.10, 0.50, 1.68]
     ]
 
-    print(JpegEncoder.quantification(matrice_apres_dct,JpegEncoder.getQuantificationTable()))   
+    print(JpegEncoder.quantification(matrice_apres_dct,JpegEncoder.getQuantificationTable()))    """
 
         

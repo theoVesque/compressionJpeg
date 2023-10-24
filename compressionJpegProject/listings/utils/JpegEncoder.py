@@ -67,20 +67,20 @@ class JpegEncoder():
     def adjustSizeOfMatrixOfPixels_repeatEnd(self):
         width,height = self.image.size
         matrixOfPixels = self.getPixelsMatrix()
-        nbOfPixelsToAddPerLign = 8 - width%8
+        nbOfPixelsToAddPerline = 8 - width%8
         nbOfPixelsToAddPerCol = 8 - height%8
         for l in range (len(matrixOfPixels)):
-            matrixOfPixels[l] = matrixOfPixels[l] + matrixOfPixels[l][-nbOfPixelsToAddPerLign::]
+            matrixOfPixels[l] = matrixOfPixels[l] + matrixOfPixels[l][-nbOfPixelsToAddPerline::]
         matrixOfPixels = matrixOfPixels + matrixOfPixels[-nbOfPixelsToAddPerCol::]
         return matrixOfPixels
     
     def adjustSizeOfMatrixOfPixels_addWhitePixels(self):
         width,height = self.image.size
         matrixOfPixels = self.getPixelsMatrix()
-        nbOfPixelsToAddPerLign = 8 - width%8
+        nbOfPixelsToAddPerline = 8 - width%8
         nbOfPixelsToAddPerCol = 8 - height%8
         for l in range (len(matrixOfPixels)):
-            matrixOfPixels[l] = matrixOfPixels[l] + [255]*nbOfPixelsToAddPerLign
+            matrixOfPixels[l] = matrixOfPixels[l] + [255]*nbOfPixelsToAddPerline
         matrixOfPixels = matrixOfPixels + [[255]*len(matrixOfPixels[0])]*nbOfPixelsToAddPerCol
         return matrixOfPixels
     
@@ -106,12 +106,31 @@ class JpegEncoder():
         adjustedPicture.putdata(adjustedPictureListOfPixels)
         adjustedPicture.save(self.picturePath+"_adjusted.bmp")
 
+    def decoupage8x8(self,adjustedMatrixOfPixels):
+        #Dimenssion des matrices utilisées
+        matrixHeight = len(adjustedMatrixOfPixels)
+        matrixWidth = len(adjustedMatrixOfPixels[0])
+        widthMatrixOfBlocks = matrixWidth//8
+        heightMatrixOfBlocks = matrixHeight//8
+        matrixOfBlocks = []
+        #Création d'une matrice de blocks vides
+        for _ in range(heightMatrixOfBlocks):
+            matrixOfBlocks.append([])
+            for _ in range(widthMatrixOfBlocks):
+                matrixOfBlocks[-1].append([[],[],[],[],[],[],[],[]])
+        #Insertion des valeurs dans la matrice
+        indiceLigneBlock = 0
+        for l in range(matrixHeight):
+            for c in range(matrixWidth):
+                if (len(matrixOfBlocks[l//8][c//8][indiceLigneBlock]) == 8 ):
+                    indiceLigneBlock += 1
+                matrixOfBlocks[l//8][c//8][indiceLigneBlock].append(adjustedMatrixOfPixels[l][c])
+                if(indiceLigneBlock == 7 and len(matrixOfBlocks[l//8][widthMatrixOfBlocks-1][indiceLigneBlock]) == 8):
+                    indiceLigneBlock = 0
+        return matrixOfBlocks
 
-
-    def decoupage8x8(self):
-        pixelsMatrix = self.getPixelsMatrix()
+    def parcoursZigZag():      
         
-
 if __name__ == '__main__':
     owlBitmap = JpegEncoder("bitmap_picture_250.bmp")
     print(owlBitmap.pictureFormat)
@@ -119,6 +138,30 @@ if __name__ == '__main__':
     #print(owlBitmap.getPixelsMatrix())
     #matrix = owlBitmap.adjustSizeOfMatrixOfPixels_addWhitePixels()
     owlBitmap.createPictureFromMatrixOfPixels("wp")
+    owlBitmapMatrixOfPixel = owlBitmap.adjustSizeOfMatrixOfPixels_addWhitePixels()
+    print(owlBitmap.decoupage8x8(owlBitmapMatrixOfPixel))
+
+    """ matrice_test_decoupage = [
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+    ] """
+    #print(owlBitmap.decoupage8x8(matrice_test_decoupage))
+    
+
     
     #Test quantification
     #matrice qui sert juste à tester le code pour la quantification

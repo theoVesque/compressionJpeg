@@ -1,6 +1,9 @@
 from functions import *
 from PIL import Image
-import numpy as np
+from math import cos, pi, sqrt
+from copy import deepcopy
+from collections import Counter
+from huffmanEncoding import *
 
 class JpegEncoder():
     """
@@ -10,7 +13,7 @@ class JpegEncoder():
             self.picturePath = getAbsPicturePath(pictureFile)
             self.image = Image.open(self.picturePath)
             self.pictureFormat = self.image.format
-
+            self.width , self.height = self.image.size
 
     def isBitmapFile(self)->bool:
         """
@@ -113,11 +116,13 @@ class JpegEncoder():
         widthMatrixOfBlocks = matrixWidth//8
         heightMatrixOfBlocks = matrixHeight//8
         matrixOfBlocks = []
+        
         #Création d'une matrice de blocks vides
         for _ in range(heightMatrixOfBlocks):
             matrixOfBlocks.append([])
             for _ in range(widthMatrixOfBlocks):
                 matrixOfBlocks[-1].append([[],[],[],[],[],[],[],[]])
+        
         #Insertion des valeurs dans la matrice
         indiceLigneBlock = 0
         for l in range(matrixHeight):
@@ -128,18 +133,114 @@ class JpegEncoder():
                 if(indiceLigneBlock == 7 and len(matrixOfBlocks[l//8][widthMatrixOfBlocks-1][indiceLigneBlock]) == 8):
                     indiceLigneBlock = 0
         return matrixOfBlocks
-
-    def parcoursZigZag():      
         
+    @staticmethod
+    def calculDCTvalue(bloc8x8,u,v)->float:
+        dctValue:np.float64 = 0.0
+        cu = 1 / sqrt(2) if (u == 0) else 1  
+        cv = 1 / sqrt(2) if (v == 0) else 1
+        for l in range(len(bloc8x8)):
+            for c in range(len(bloc8x8[0])):
+                centeredValue = bloc8x8[l][c] - 128
+                dctValue += \
+                    np.float64(0.25 * cu * cv * centeredValue \
+                    * cos((2 * l + 1 ) * u * pi / 16) \
+                    * cos((2 * c + 1 ) * v * pi / 16))
+        return dctValue
+    
+    @staticmethod
+    def DCT8x8(block8x8:np.array): 
+        N, _= block8x8.shape
+        matriceDCT = np.zeros((N,N))
+        for u in range(N):
+            for v in range(N):
+                matriceDCT[u, v] = JpegEncoder.calculDCTvalue(block8x8,u,v)
+        return matriceDCT
+
+
+    @staticmethod
+    def matrixtoList(blockMatrix):
+        resultat = []
+        for lb in range(len(blockMatrix)):
+            for cb in range(len(blockMatrix[0])):
+                resultat.append(blockMatrix[lb][cb])
+        return resultat
+
+    
+    @staticmethod
+    def zigZag(matrice):
+        lignes = len(matrice)
+        colonnes = len(matrice[0])
+        listezigZag = []
+        i=0
+        j=0
+        while(i<=lignes-1 and j<=colonnes-1):
+            listezigZag.append(matrice[i][j])
+            if(i==0 or i==lignes-1):
+                if(j==colonnes-1):
+                    j-=1
+                    i+=1
+                j+=1
+                listezigZag.append(matrice[i][j])
+            else:
+                if j == 0 or j == colonnes-1:
+                    if i == lignes-1:
+                        i = i - 1
+                        j = j + 1
+                    i = i + 1
+                    listezigZag.append(matrice[i][j])
+            if i == 0 or j == colonnes-1:
+                limit = False
+            if j == 0 or i == lignes-1:
+                limit = True
+            if limit:
+                i = i - 1
+                j = j + 1
+            else:
+                i = i + 1
+                j = j - 1
+        return listezigZag
+    
+    @staticmethod
+    def RLE(zigzag):
+        resultat = []  # Tuple pour stocker les valeurs resultat
+        compteur = 1  # On intialise un compteur
+        valeur_precedente = zigzag[0]
+
+        for i in range(1, len(zigzag)):
+            valeur_actuelle = zigzag[i]
+            if valeur_actuelle == valeur_precedente:
+                compteur += 1
+            else:
+                resultat.append((valeur_precedente, compteur))
+                compteur = 1
+                valeur_precedente = valeur_actuelle
+
+        resultat.append((valeur_precedente, compteur)) # Ajoute le dernier resultat
+        return resultat
+    
+    def JPEGCompression(self) -> (str, any):
+        #On récupère la matrice de pixels de l'image
+        matrixPixels = self.adjustSizeOfMatrixOfPixels_addWhitePixels()
+        blocksMatrix = self.decoupage8x8(matrixPixels)
+        blockMatrixDCTQuantified = deepcopy(blocksMatrix)
+        for lb in range(len(blocksMatrix)):
+            for cb in range(len(blocksMatrix[0])):
+                blockMatrixDCTQuantified[lb][cb] = JpegEncoder.quantification(npArrayToPyhtonList(JpegEncoder.DCT8x8(np.array(blocksMatrix[lb][cb]))),JpegEncoder.getQuantificationTable())
+        dataZigZagScanningMatrix = []
+        for lb in range(len(blocksMatrix)):
+            for cb in range(len(blocksMatrix[0])):
+                dataZigZagScanningMatrix.append(JpegEncoder.zigZag( blockMatrixDCTQuantified[lb][cb]))
+        dataZigZagScanning = JpegEncoder.matrixtoList(dataZigZagScanningMatrix)
+        #Encodage RLE
+        dataRLE = JpegEncoder.RLE(dataZigZagScanning)
+        #Encodage Huffman
+        return Huffman_Encoding(dataRLE)
+
+
+    
 if __name__ == '__main__':
-    owlBitmap = JpegEncoder("bitmap_picture_250.bmp")
-    print(owlBitmap.pictureFormat)
-    owlBitmap.image = owlBitmap.image.convert('L')
-    #print(owlBitmap.getPixelsMatrix())
-    #matrix = owlBitmap.adjustSizeOfMatrixOfPixels_addWhitePixels()
-    owlBitmap.createPictureFromMatrixOfPixels("wp")
-    owlBitmapMatrixOfPixel = owlBitmap.adjustSizeOfMatrixOfPixels_addWhitePixels()
-    print(owlBitmap.decoupage8x8(owlBitmapMatrixOfPixel))
+    #print(owlBitmap.decoupage8x8(owlBitmapMatrixOfPixel))
 
     """ matrice_test_decoupage = [
         [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
@@ -157,25 +258,80 @@ if __name__ == '__main__':
         [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
         [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
         [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
-        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8],
+        [1,2,2,1,3,1,1,1,9,1,1,1,2,3,4,8]
     ] """
     #print(owlBitmap.decoupage8x8(matrice_test_decoupage))
-    
-
-    
-    #Test quantification
-    #matrice qui sert juste à tester le code pour la quantification
-    """ matrice_apres_dct = [
-        [-415.38, -30.19, -61.20, 27.24, 56.12, -20.10, -2.39, 0.46],
-        [4.47, -21.86, -60.76, 10.25, 13.15, -7.09, -8.54, 4.88],
-        [-46.83, 7.37, 77.13, -24.56, -28.91, 9.93, 5.42, -5.65],
-        [-48.53, 12.07, 34.10, -14.76, -10.24, 6.3, 1.83, 1.95],
-        [12.12, -6.55, -13.20, -3.95, -1.87, 1.75, -2.79, 3.14],
-        [-7.73, 2.91, 2.38, -5.94, -2.38, 0.94, 4.30, 1.85],
-        [-1.03, 0.18, 0.42, -2.42, -0.88, -3.02, 4.12, -0.66],
-        [-0.17, 0.14, -1.07, -1.07, -1.17, -0.10, 0.50, 1.68]
+    #Test centrage d'une matrice
+    matrice_test_dct = [
+        [52, 55, 61, 66, 70, 61, 64, 73],
+        [63, 59, 55, 90, 109, 85, 69, 72],
+        [62, 59, 68, 113, 144, 104, 66, 73],
+        [63, 58, 71, 122, 154, 106, 70, 69],
+        [67, 61, 68, 104, 126, 88, 68, 70],
+        [79, 65, 60, 70, 77, 68, 58, 75],
+        [85, 71, 64, 59, 55, 61, 65, 83],
+        [87, 79, 69, 87, 65, 76, 78, 94]
     ]
 
-    print(JpegEncoder.quantification(matrice_apres_dct,JpegEncoder.getQuantificationTable()))    """
+    array_test_dct = np.array([[52, 55, 61, 66, 70, 61, 64, 73],
+            [63, 59, 55, 90, 109, 85, 69, 72],
+            [62, 59, 68, 113, 144, 104, 66, 73],
+            [63, 58, 71, 122, 154, 106, 70, 69],
+            [67, 61, 68, 104, 126, 88, 68, 70],
+            [79, 65, 60, 70, 77, 68, 58, 75],
+            [85, 71, 64, 59, 55, 61, 65, 83],
+            [87, 79, 69, 68, 65, 76, 78, 94]])
+    #Test matriceDCT
+
+    arrayDCT = JpegEncoder.DCT8x8(array_test_dct)  
+    matriceDCT = npArrayToPyhtonList(arrayDCT)
+    
+    print("**************** Original Matrix Blocks 8x8 ****************") 
+    afficherMatrice(matrice_test_dct)
+    print()
+    
+    print("**************** DCT Matrix ****************") 
+    afficherMatrice(matriceDCT)
+    print()
+    
+    #Test quantification
+    quantifiedMatrix = JpegEncoder.quantification(matriceDCT,JpegEncoder.getQuantificationTable())
+
+    print("**************** Data after ZigZag Scanning ****************")
+    zigZagMatrix = JpegEncoder.zigZag(quantifiedMatrix)
+    print(zigZagMatrix)
+    print()
+
+    dataRLE = JpegEncoder.RLE(zigZagMatrix)
+    print("**************** Binary Data after RLE Encoding ****************")
+    print(dataRLE)
+    print() 
+
+    # Exemple d'utilisation
+    huffman_binaries,huffmanTree = Huffman_Encoding(dataRLE)
+
+    print("**************** Binary Data after Huffman Encoding ****************")
+    print(huffman_binaries)
+    print()
+
+    """ decoded_data_huffman = Huffman_Decoding(huffman_binaries,huffmanTree)
+
+    print("**************** Decoded Data *****************")
+    print(decoded_data_huffman)
+    print() """
+    
+    #Test avec un vrai image
+    owlBitmap = JpegEncoder("bitmap_picture.bmp")
+    #print(owlBitmap.pictureFormat)
+    owlBitmap.image = owlBitmap.image.convert('L')
+    #print(owlBitmap.getPixelsMatrix())
+    #matrix = owlBitmap.adjustSizeOfMatrixOfPixels_addWhitePixels()
+    owlBitmap.createPictureFromMatrixOfPixels("wp")
+    owlBitmapMatrixOfPixel = owlBitmap.adjustSizeOfMatrixOfPixels_addWhitePixels()
+    print("Width = ",owlBitmap.width)
+    print("Height = ",owlBitmap.height)
+    owlBitmap.JPEGCompression()
+    
+
 
         

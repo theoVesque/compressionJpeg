@@ -1,4 +1,5 @@
 from os import path, getcwd
+import numpy as np
 
 def getAbsPicturePath(pictureFileName:str):
     relativePath = f"compressionJpegProject\\listings\\static\\pictures\\{pictureFileName}"
@@ -17,3 +18,16 @@ def pictureToBinaryFile(picturePath:str) -> str:
             for line in content:
                 wf.write(line.hex())
         return writedFile
+    
+def afficherMatrice(matrice):
+    for ligne in matrice:
+        print(ligne)
+
+def npArrayToPyhtonList(array:np.array):
+        lignes,colonnes = array.shape
+        matricePython = []
+        for i in range(lignes):
+            matricePython.append([])
+            for j in range(colonnes):
+                matricePython[-1].append(round(array[i, j],2))
+        return matricePython

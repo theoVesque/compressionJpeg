@@ -107,7 +107,7 @@ class JpegEncoder():
         height = len(adjustedPictureMatrixOfPixels)
         adjustedPicture = Image.new("L",(width,height))
         adjustedPicture.putdata(adjustedPictureListOfPixels)
-        adjustedPicture.save(self.picturePath+"_adjusted.bmp")
+        adjustedPicture.save(self.picturePath.split(".")[0]+"_adjusted.bmp")
 
     def decoupage8x8(self,adjustedMatrixOfPixels):
         #Dimenssion des matrices utilisées

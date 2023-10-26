@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+.form-container {
+    width: 100vw;
+    height: 100vh;
+    background-color: #fdffd9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.upload-files-container {
+    background-color: #f7fff7;
+    width: 50vw;
+    padding: 30px 60px;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 10px 20px, rgba(0, 0, 0, 0.28) 0px 6px 6px;
+}
+.zone-fichier-glissable {
+    border: 2px dashed #18282f;
+    border-radius: 40px;
+    margin: 10px 0 15px;
+    padding: 30px 50px;
+    width: 80%;
+    text-align: center;
+}
+.zone-fichier-glissable .icone-upload {
+    font-size: 50px;
+}
+.zone-fichier-glissable h3 {
+    font-size: 26px;
+    margin: 15px 0;
+}
+.zone-fichier-glissable label {
+    font-size: 19px;
+}
+.zone-fichier-glissable label .texte-pour-parcourir-fichier {
+    color: #18282f;
+    font-weight: bolder;
+    cursor: pointer;
+}
+.parcourir-fichiers span {
+    position: relative;
+    top: -25px;
+}
+.input-fichier-par-defaut {
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+.bouton-uploader {
+    font-family: 'Montserrat';
+    background-color: #18282f;
+    color: #f7fff7;
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    border: none;
+    border-radius: 20px;
+    margin: 10px;
+    padding: 7.5px 50px;
+    cursor: pointer;
+}
+
+.bouton-uploader:hover {
+    background-color: #324856;
+}
+
+label {
+    display: block;
+}
+
+
+.zone-fichier-glissable {
+    position: relative;
+}
+
+.input-fichier-par-defaut {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+
+
+#image-preview {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#image-preview:hover {
+    position: relative;
+    transform: scale(1.3);
+    transition: 0.7s;
+}
